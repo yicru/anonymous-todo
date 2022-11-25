@@ -1,7 +1,9 @@
+import { Center, Text } from '@chakra-ui/react'
+
 export default function IndexPage() {
   return (
-    <div>
-      <h1>Hello, Anonymous ToDo</h1>
-    </div>
+    <Center h={'100vh'}>
+      <Text>Hello, Anonymous ToDo</Text>
+    </Center>
   )
 }
