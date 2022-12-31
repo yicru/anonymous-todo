@@ -1,9 +1,10 @@
 import { ChakraProvider } from '@chakra-ui/react'
-import type { AppProps } from 'next/app'
+import type { AppType } from 'next/app'
 
-import { BaseLayout } from '../layouts/BaseLayout'
+import { BaseLayout } from '@src/layouts/BaseLayout'
+import { trpc } from '@src/libs/trpc'
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ChakraProvider>
       <BaseLayout>
@@ -12,3 +13,5 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     </ChakraProvider>
   )
 }
+
+export default trpc.withTRPC(MyApp)

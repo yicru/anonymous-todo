@@ -8,14 +8,26 @@ import {
 } from '@chakra-ui/react'
 import { FormEvent, useState } from 'react'
 
+import { trpc } from '@src/libs/trpc'
+
 export default function IndexPage() {
-  const [todos, setTodos] = useState<string[]>([])
+  const trpcContext = trpc.useContext()
+  const tasksQuery = trpc.task.list.useQuery()
+
   const [value, setValue] = useState('')
 
-  const onSubmit = (event: FormEvent) => {
+  const addTask = trpc.task.add.useMutation({
+    onSuccess: async () => {
+      await trpcContext.task.list.invalidate()
+      setValue('')
+    },
+  })
+
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault()
-    setTodos([...todos, value])
-    setValue('')
+    await addTask.mutateAsync({
+      value,
+    })
   }
 
   return (
@@ -29,8 +41,8 @@ export default function IndexPage() {
         <Button type={'submit'}>追加</Button>
       </HStack>
       <UnorderedList mt={4}>
-        {todos.map((todo) => (
-          <ListItem key={todo}>{todo}</ListItem>
+        {tasksQuery.data?.map((task) => (
+          <ListItem key={task.value}>{task.value}</ListItem>
         ))}
       </UnorderedList>
     </Box>
