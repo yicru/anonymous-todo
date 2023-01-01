@@ -1,16 +1,7 @@
 import { z } from 'zod'
 
+import { prisma } from '@src/server/prisma'
 import { procedure, router } from '@src/server/trpc'
-
-type Task = {
-  value: string
-}
-
-const taskList: Task[] = [
-  {
-    value: 'task 1',
-  },
-]
 
 export const taskRouter = router({
   add: procedure
@@ -19,11 +10,14 @@ export const taskRouter = router({
         value: z.string().min(1),
       }),
     )
-    .mutation(({ input }) => {
-      taskList.push(input)
-      return input
+    .mutation(async ({ input }) => {
+      return await prisma.task.create({
+        data: {
+          value: input.value,
+        },
+      })
     }),
-  list: procedure.query(() => {
-    return taskList
+  list: procedure.query(async () => {
+    return await prisma.task.findMany()
   }),
 })
