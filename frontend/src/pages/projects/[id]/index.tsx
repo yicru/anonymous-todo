@@ -8,6 +8,7 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
@@ -31,36 +32,42 @@ export default function ProjectPage() {
   }, [router.asPath, setValue])
 
   return (
-    <Grid gap={4} h={'full'} p={4} templateRows={'auto 1px 1fr 1px auto'}>
-      <Box>
-        <Skeleton isLoaded={!projectQuery.isLoading} height={'32px'}>
-          {projectQuery.data && (
-            <UpdateProjectNameForm project={projectQuery.data} />
-          )}
+    <>
+      <Head>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+
+      <Grid gap={4} h={'full'} p={4} templateRows={'auto 1px 1fr 1px auto'}>
+        <Box>
+          <Skeleton isLoaded={!projectQuery.isLoading} height={'32px'}>
+            {projectQuery.data && (
+              <UpdateProjectNameForm project={projectQuery.data} />
+            )}
+          </Skeleton>
+          <Skeleton isLoaded={!projectQuery.isLoading} mt={1} height={'18px'}>
+            <HStack>
+              <Text fontSize={'xs'} color={'gray.400'} mt={1}>
+                ID: {projectQuery.data?.id}
+              </Text>
+              <Button variant={'outline'} size={'xs'} onClick={onCopy}>
+                {hasCopied ? 'コピーしました！' : '共有URLをコピー'}
+              </Button>
+            </HStack>
+          </Skeleton>
+        </Box>
+
+        <Divider />
+
+        <Skeleton isLoaded={!projectQuery.isLoading}>
+          {projectQuery.data && <TaskTabs project={projectQuery.data} />}
         </Skeleton>
-        <Skeleton isLoaded={!projectQuery.isLoading} mt={1} height={'18px'}>
-          <HStack>
-            <Text fontSize={'xs'} color={'gray.400'} mt={1}>
-              ID: {projectQuery.data?.id}
-            </Text>
-            <Button variant={'outline'} size={'xs'} onClick={onCopy}>
-              {hasCopied ? 'コピーしました！' : '共有URLをコピー'}
-            </Button>
-          </HStack>
+
+        <Divider />
+
+        <Skeleton isLoaded={!projectQuery.isLoading} height={'40px'}>
+          {projectQuery.data && <AddTaskForm project={projectQuery.data} />}
         </Skeleton>
-      </Box>
-
-      <Divider />
-
-      <Skeleton isLoaded={!projectQuery.isLoading}>
-        {projectQuery.data && <TaskTabs project={projectQuery.data} />}
-      </Skeleton>
-
-      <Divider />
-
-      <Skeleton isLoaded={!projectQuery.isLoading} height={'40px'}>
-        {projectQuery.data && <AddTaskForm project={projectQuery.data} />}
-      </Skeleton>
-    </Grid>
+      </Grid>
+    </>
   )
 }
