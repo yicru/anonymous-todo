@@ -3,6 +3,7 @@ import {
   Divider,
   Grid,
   ListItem,
+  Skeleton,
   Text,
   UnorderedList,
 } from '@chakra-ui/react'
@@ -15,7 +16,7 @@ import { trpc } from '@src/libs/trpc'
 export default function ProjectPage() {
   const router = useRouter()
 
-  const projectQuery = trpc.project.byId.useQuery(
+  const { data, isLoading } = trpc.project.byId.useQuery(
     { id: String(router.query.id) },
     { enabled: !!router.query.id },
   )
@@ -23,25 +24,31 @@ export default function ProjectPage() {
   return (
     <Grid gap={4} h={'full'} p={4} templateRows={'auto 1px 1fr 1px auto'}>
       <Box>
-        {projectQuery.data && (
-          <UpdateProjectNameForm project={projectQuery.data} />
-        )}
-        <Text fontSize={'xs'} color={'gray.400'} mt={1}>
-          ID: {String(router.query.id)}
-        </Text>
+        <Skeleton isLoaded={!isLoading} height={'32px'}>
+          {data && <UpdateProjectNameForm project={data} />}
+        </Skeleton>
+        <Skeleton isLoaded={!isLoading} mt={1} height={'18px'}>
+          <Text fontSize={'xs'} color={'gray.400'} mt={1}>
+            ID: {data?.id}
+          </Text>
+        </Skeleton>
       </Box>
 
       <Divider />
 
-      <UnorderedList overflowY={'scroll'}>
-        {projectQuery.data?.tasks.map((task) => (
-          <ListItem key={task.title}>{task.title}</ListItem>
-        ))}
-      </UnorderedList>
+      <Skeleton isLoaded={!isLoading}>
+        <UnorderedList overflowY={'scroll'}>
+          {data?.tasks.map((task) => (
+            <ListItem key={task.title}>{task.title}</ListItem>
+          ))}
+        </UnorderedList>
+      </Skeleton>
 
       <Divider />
 
-      {projectQuery.data && <AddTaskForm project={projectQuery.data} />}
+      <Skeleton isLoaded={!isLoading} height={'40px'}>
+        {data && <AddTaskForm project={data} />}
+      </Skeleton>
     </Grid>
   )
 }
