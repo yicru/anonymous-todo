@@ -7,7 +7,7 @@ export const projectRouter = router({
   add: procedure.mutation(async () => {
     return await prisma.project.create({
       data: {
-        name: '',
+        name: '無題のTODOリスト',
       },
     })
   }),
@@ -21,6 +21,23 @@ export const projectRouter = router({
       return await prisma.project.findUniqueOrThrow({
         include: {
           tasks: true,
+        },
+        where: {
+          id: input.id,
+        },
+      })
+    }),
+  update: procedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        name: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return await prisma.project.update({
+        data: {
+          name: input.name,
         },
         where: {
           id: input.id,

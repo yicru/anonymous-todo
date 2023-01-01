@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
+import { UpdateProjectNameForm } from '@src/features/project/components/UpdateProjectNameForm'
 import { AddTaskForm } from '@src/features/task/components/AddTaskForm'
 import { trpc } from '@src/libs/trpc'
 
@@ -20,15 +21,12 @@ export default function ProjectPage() {
   )
 
   return (
-    <Grid
-      gap={4}
-      h={'full'}
-      py={8}
-      px={4}
-      templateRows={'auto 1px 1fr 1px auto'}
-    >
+    <Grid gap={4} h={'full'} p={4} templateRows={'auto 1px 1fr 1px auto'}>
       <Box>
-        <Text fontSize={'xs'} color={'gray.600'}>
+        {projectQuery.data && (
+          <UpdateProjectNameForm project={projectQuery.data} />
+        )}
+        <Text fontSize={'xs'} color={'gray.400'} mt={1}>
           ID: {String(router.query.id)}
         </Text>
       </Box>
