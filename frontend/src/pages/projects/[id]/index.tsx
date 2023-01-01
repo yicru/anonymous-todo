@@ -27,7 +27,7 @@ export default function ProjectPage() {
   )
 
   useEffect(() => {
-    setValue(process.env.NEXT_PUBLIC_APP_URL + router.asPath)
+    setValue(process.env.NEXT_PUBLIC_APP_ORIGIN + router.asPath)
   }, [router.asPath, setValue])
 
   return (
