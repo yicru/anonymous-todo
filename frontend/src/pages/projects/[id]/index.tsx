@@ -39,7 +39,7 @@ export default function ProjectPage() {
       <Skeleton isLoaded={!isLoading}>
         <UnorderedList overflowY={'scroll'}>
           {data?.tasks.map((task) => (
-            <ListItem key={task.title}>{task.title}</ListItem>
+            <ListItem key={task.id}>{task.title}</ListItem>
           ))}
         </UnorderedList>
       </Skeleton>
