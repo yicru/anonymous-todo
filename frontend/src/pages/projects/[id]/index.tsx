@@ -4,10 +4,8 @@ import {
   Divider,
   Grid,
   HStack,
-  ListItem,
   Skeleton,
   Text,
-  UnorderedList,
   useClipboard,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
@@ -15,6 +13,7 @@ import { useEffect } from 'react'
 
 import { UpdateProjectNameForm } from '@src/features/project/components/UpdateProjectNameForm'
 import { AddTaskForm } from '@src/features/task/components/AddTaskForm'
+import { TaskTabs } from '@src/features/task/components/TaskTabs'
 import { trpc } from '@src/libs/trpc'
 
 export default function ProjectPage() {
@@ -22,7 +21,7 @@ export default function ProjectPage() {
 
   const { hasCopied, onCopy, setValue } = useClipboard('')
 
-  const { data, isLoading } = trpc.project.byId.useQuery(
+  const projectQuery = trpc.project.byId.useQuery(
     { id: String(router.query.id) },
     { enabled: !!router.query.id },
   )
@@ -34,13 +33,15 @@ export default function ProjectPage() {
   return (
     <Grid gap={4} h={'full'} p={4} templateRows={'auto 1px 1fr 1px auto'}>
       <Box>
-        <Skeleton isLoaded={!isLoading} height={'32px'}>
-          {data && <UpdateProjectNameForm project={data} />}
+        <Skeleton isLoaded={!projectQuery.isLoading} height={'32px'}>
+          {projectQuery.data && (
+            <UpdateProjectNameForm project={projectQuery.data} />
+          )}
         </Skeleton>
-        <Skeleton isLoaded={!isLoading} mt={1} height={'18px'}>
+        <Skeleton isLoaded={!projectQuery.isLoading} mt={1} height={'18px'}>
           <HStack>
             <Text fontSize={'xs'} color={'gray.400'} mt={1}>
-              ID: {data?.id}
+              ID: {projectQuery.data?.id}
             </Text>
             <Button variant={'outline'} size={'xs'} onClick={onCopy}>
               {hasCopied ? 'コピーしました！' : '共有URLをコピー'}
@@ -51,18 +52,14 @@ export default function ProjectPage() {
 
       <Divider />
 
-      <Skeleton isLoaded={!isLoading}>
-        <UnorderedList overflowY={'scroll'}>
-          {data?.tasks.map((task) => (
-            <ListItem key={task.id}>{task.title}</ListItem>
-          ))}
-        </UnorderedList>
+      <Skeleton isLoaded={!projectQuery.isLoading}>
+        {projectQuery.data && <TaskTabs project={projectQuery.data} />}
       </Skeleton>
 
       <Divider />
 
-      <Skeleton isLoaded={!isLoading} height={'40px'}>
-        {data && <AddTaskForm project={data} />}
+      <Skeleton isLoaded={!projectQuery.isLoading} height={'40px'}>
+        {projectQuery.data && <AddTaskForm project={projectQuery.data} />}
       </Skeleton>
     </Grid>
   )

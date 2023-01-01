@@ -14,12 +14,35 @@ export const taskRouter = router({
     .mutation(async ({ input }) => {
       return await prisma.task.create({
         data: {
+          completedAt: null,
           project: {
             connect: {
               id: input.projectId,
             },
           },
           title: input.title,
+        },
+      })
+    }),
+  toggle: procedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const task = await prisma.task.findUniqueOrThrow({
+        where: {
+          id: input.id,
+        },
+      })
+
+      return await prisma.task.update({
+        data: {
+          completedAt: task.completedAt ? null : new Date(),
+        },
+        where: {
+          id: task.id,
         },
       })
     }),
