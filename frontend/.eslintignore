@@ -1,3 +1,4 @@
 .next
 tsconfig.json
 next.config.js
+src/libs/pathpida/$path.ts

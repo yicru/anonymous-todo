@@ -1,6 +1,7 @@
 import { Box, Button } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
+import { pagesPath } from '@src/libs/pathpida/$path'
 import { trpc } from '@src/libs/trpc'
 
 export default function IndexPage() {
@@ -8,7 +9,7 @@ export default function IndexPage() {
 
   const addProject = trpc.project.add.useMutation({
     onSuccess: async (project) => {
-      await router.push(`/projects/${project.id}`)
+      await router.push(pagesPath.projects._id(project.id).$url())
     },
   })
 
