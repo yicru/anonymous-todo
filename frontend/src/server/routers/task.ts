@@ -7,17 +7,20 @@ export const taskRouter = router({
   add: procedure
     .input(
       z.object({
-        value: z.string().min(1),
+        projectId: z.string().cuid(),
+        title: z.string().min(1),
       }),
     )
     .mutation(async ({ input }) => {
       return await prisma.task.create({
         data: {
-          value: input.value,
+          project: {
+            connect: {
+              id: input.projectId,
+            },
+          },
+          title: input.title,
         },
       })
     }),
-  list: procedure.query(async () => {
-    return await prisma.task.findMany()
-  }),
 })
