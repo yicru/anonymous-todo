@@ -1,44 +1,23 @@
 import {
   Box,
-  Button,
   Divider,
   Grid,
-  HStack,
-  Input,
   ListItem,
   Text,
   UnorderedList,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
 
+import { AddTaskForm } from '@src/features/task/components/AddTaskForm'
 import { trpc } from '@src/libs/trpc'
 
 export default function ProjectPage() {
   const router = useRouter()
 
-  const trpcContext = trpc.useContext()
   const projectQuery = trpc.project.byId.useQuery(
     { id: String(router.query.id) },
     { enabled: !!router.query.id },
   )
-
-  const [value, setValue] = useState('')
-
-  const addTask = trpc.task.add.useMutation({
-    onSuccess: async () => {
-      await trpcContext.project.byId.invalidate()
-      setValue('')
-    },
-  })
-
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault()
-    await addTask.mutateAsync({
-      projectId: String(router.query.id),
-      title: value,
-    })
-  }
 
   return (
     <Grid
@@ -64,14 +43,7 @@ export default function ProjectPage() {
 
       <Divider />
 
-      <HStack as={'form'} onSubmit={onSubmit}>
-        <Input
-          isRequired
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <Button type={'submit'}>追加</Button>
-      </HStack>
+      {projectQuery.data && <AddTaskForm project={projectQuery.data} />}
     </Grid>
   )
 }
